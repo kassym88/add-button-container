@@ -5,46 +5,78 @@
     <title>Title</title>
     <style>
         body {
-            padding: 50px;
+            padding: 100px;
         }
 
-        .label-area .label {
+        .container {
             border: 1px solid grey;
-            cursor: pointer;
+            display: inline-flex;
+            padding: 35px;
         }
 
-        .label-area .buttons button {
+        .wrapper {
+            display: inline-flex;
+        }
+
+        .wrapper > div {
+            margin-right: 35px;
+        }
+
+        .box {
+            background-color: orange;
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            margin: auto;
+        }
+
+        .label-area {
+            border: 1px solid grey;
+            display: inline-block;
+            position: relative;
+            margin: auto;
+        }
+
+        .label {
             cursor: pointer;
+            padding: 15px 0;
+            width: 120px;
+            display: block;
+            text-align: center;
+        }
+
+        .buttons {
+            display: none;
+            column-gap: 20px;
+            position: absolute;
+            top: -40px;
+            left: -70px;
+        }
+
+        .label-area:hover .buttons {
+            display: flex;
+        }
+
+        .buttons button {
+            cursor: pointer;
+            padding: 15px 0;
+            width: 120px;
         }
     </style>
 </head>
 <body>
 <script>
-    function changeBackgroundColor(e) {
-        e.target.style.backgroundColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    function createBox(e) {
+        const box = document.createElement('div');
+        box.className = 'box';
+        box.style.backgroundColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+
+        const wrapperChild = document.createElement('div');
+        e.target.parentNode.parentNode.parentNode.firstChild.append(box);
     }
 
-    function addButtons(e) {
-        const buttonBox = document.createElement('button');
-        buttonBox.innerText = 'Box';
-        buttonBox.addEventListener('click', changeBackgroundColor);
-
-        const buttons = document.createElement('span');
-        buttons.className = 'buttons';
-        buttons.append(buttonBox);
-        createLabelArea(buttons);
-
-        e.target.append(buttons);
-    }
-
-    function removeButtons(e) {
-        const target = e.target;
-        for (let i = 0; i < target.childNodes.length; i++) {
-            if (target.childNodes[i].className === 'buttons') {
-                target.removeChild(target.childNodes[i]);
-                break;
-            }
-        }
+    function createContaner(e) {
+        createLabelArea(e.target.parentNode.parentNode.parentNode.firstChild);
     }
 
     function createLabelArea(target) {
@@ -52,15 +84,34 @@
         label.innerText = 'Add';
         label.className = 'label';
 
-        const labelArea = document.createElement('span');
+        const boxButton = document.createElement('button');
+        boxButton.innerText = 'box';
+        boxButton.addEventListener('click', createBox);
+
+        const containerButton = document.createElement('button');
+        containerButton.innerText = 'container';
+        containerButton.addEventListener('click', createContaner);
+
+        const buttons = document.createElement('div');
+        buttons.className = 'buttons';
+        buttons.append(boxButton);
+        buttons.append(containerButton);
+
+        const labelArea = document.createElement('div');
         labelArea.className = 'label-area';
+        labelArea.append(buttons);
         labelArea.append(label);
-        labelArea.addEventListener('mouseenter', addButtons);
-        labelArea.addEventListener('mouseleave', removeButtons);
 
-        target.append(labelArea);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'wrapper';
+
+        const container = document.createElement('div');
+        container.className = 'container';
+        container.append(wrapper);
+        container.append(labelArea);
+
+        target.append(container);
     }
-
 
     document.addEventListener('DOMContentLoaded', () => {
         createLabelArea(document.body);
